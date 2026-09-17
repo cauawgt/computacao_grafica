@@ -1,5 +1,5 @@
 #include <iostream>
-#include "include/Math3D.h"
+#include "include/AlgLinear.h"
 #include "include/Utils.h"
 
 int main()

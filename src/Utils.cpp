@@ -1,6 +1,6 @@
 #include <sstream>
 #include "../include/Utils.h"
-#include "../include/Math3D.h"
+#include "../include/AlgLinear.h"
 
 std::string visualizacao::vetor(estrutura::Vetor3 v)
 {

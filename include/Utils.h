@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include "Math3D.h"
+#include "AlgLinear.h"
 
 namespace visualizacao {
     std::string vetor(estrutura::Vetor3 v);
