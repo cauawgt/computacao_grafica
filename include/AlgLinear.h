@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 namespace estrutura
 {
@@ -16,6 +17,18 @@ namespace estrutura
     {
         float m[3][3];
     };
+
+    struct Triangulo
+    {
+        int v1, v2, v3;
+    };
+
+    struct Malha
+    {
+        std::vector<Vetor3> vertices; // Lista com todos os pontos 
+        std::vector<Triangulo> triangulos; // Lista dizendo quem liga com quem
+    };
+    
 
 }
 

@@ -18,7 +18,7 @@ estrutura::Vetor3 opalg::multEscalar(float k, estrutura::Vetor3 a)
     return estrutura::Vetor3{k * a.x, k * a.y, k * a.z};
 }
 
-estrutura::Vetor3 multMatrizVetor(estrutura::Matriz3x3 m, estrutura::Vetor3 v)
+estrutura::Vetor3 opalg::multMatrizVetor(estrutura::Matriz3x3 m, estrutura::Vetor3 v)
 {
     estrutura::Vetor3 resultado;
 
@@ -31,7 +31,7 @@ estrutura::Vetor3 multMatrizVetor(estrutura::Matriz3x3 m, estrutura::Vetor3 v)
 
 // Operações Espaciais
 
-float produtoEscalar(estrutura::Vetor3 a, estrutura::Vetor3 b)
+float opesp::produtoEscalar(estrutura::Vetor3 a, estrutura::Vetor3 b)
 {
     return (a.x * b.x) + (a.y * b.y) + (a.z + b.z);
 }

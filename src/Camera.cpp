@@ -2,7 +2,7 @@
 #include "../include/AlgLinear.h"
 #include <math.h>
 
-void pipeline::ortoganalizarCamera(camstruct::Camera &cam)
+void pipeline::ortogonalizarCamera(camstruct::Camera &cam)
 {
     // Ortogonalizar V usando GRAM-SCHIMDT
     // V = V' (<V,N>/<N,N>) * N

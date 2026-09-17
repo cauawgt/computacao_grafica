@@ -17,7 +17,7 @@ namespace camstruct
 namespace pipeline
 {
     // Função para corrigir os vetores lidos do arquivo (Gram-Schmidt)
-    void ortoganalizarCamera(camstruct::Camera &cam);
+    void ortogonalizarCamera(camstruct::Camera &cam);
 
     // Função que Converte um ponto 3D do mundo para a visão da câmera
     estrutura::Vetor3 mundoParaVista(estrutura::Vetor3 P, camstruct::Camera cam);
