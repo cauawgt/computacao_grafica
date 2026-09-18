@@ -10,4 +10,6 @@ add_executable(computacao_grafica main.cpp
     include/Utils.h
     src/Camera.cpp
     include/Camera.h
+    src/Rasteirizador.cpp 
+    include/Rasteirizador.h 
 )
