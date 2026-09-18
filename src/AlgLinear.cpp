@@ -33,7 +33,7 @@ estrutura::Vetor3 opalg::multMatrizVetor(estrutura::Matriz3x3 m, estrutura::Veto
 
 float opesp::produtoEscalar(estrutura::Vetor3 a, estrutura::Vetor3 b)
 {
-    return (a.x * b.x) + (a.y * b.y) + (a.z + b.z);
+    return (a.x * b.x) + (a.y * b.y) + (a.z * b.z);
 }
 
 float opesp::norma(estrutura::Vetor3 a)

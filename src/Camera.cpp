@@ -7,8 +7,8 @@ void pipeline::ortogonalizarCamera(camstruct::Camera &cam)
     // Ortogonalizar V usando GRAM-SCHIMDT
     // V = V' (<V,N>/<N,N>) * N
     float prodEscalarVN = opesp::produtoEscalar(cam.V, cam.N);
-    float prodEscalarNN = opesp::produtoEscalar(cam.V, cam.N);
-    float k = prodEscalarVN - prodEscalarNN;
+    float prodEscalarNN = opesp::produtoEscalar(cam.N, cam.N);
+    float k = prodEscalarVN / prodEscalarNN;
 
     estrutura::Vetor3 projecaoN = opalg::multEscalar(k, cam.N);
     estrutura::Vetor3 vLinha = opalg::subtracao(cam.V, projecaoN);

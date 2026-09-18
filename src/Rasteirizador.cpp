@@ -44,9 +44,9 @@ void rasterizador::preencherTriangulo(Imagem& img, estrutura::Ponto2D p1, estrut
     // Calcular o INVERSO do declive (1/a) para cada aresta do triângulo 
     // 1/a = (x1 - x0) / (y1 - y0). Usado para atualizar o X a cada descida no Y.
     float invA1, invA2, InvA3;
-    invA1 = (p2.y - p1.y > 0) ? (float)(p2.x - p1.x) / (p2.y - p1.y) : 0.0f; // Aresta p1 -> p2
-    invA2 = (p3.y - p1.y > 0) ? (float)(p3.x - p1.x) / (p3.y - p1.y) : 0.0f; // Aresta p1 -> p3
-    InvA3 = (p3.y - p2.y > 0) ? (float)(p3.x - p2.x) / (p3.y - p2.y) : 0.0f; // Aresta p2 -> p3
+    invA1 = (p2.y - p1.y > 0) ? ((float)(p2.x - p1.x)) / ((float)(p2.y - p1.y)) : 0.0f; 
+    invA2 = (p3.y - p1.y > 0) ? ((float)(p3.x - p1.x)) / ((float)(p3.y - p1.y)) : 0.0f; 
+    InvA3 = (p3.y - p2.y > 0) ? ((float)(p3.x - p2.x)) / ((float)(p3.y - p2.y)) : 0.0f;
 
     float atualX1 = p1.x; // Rastreia o X da esquerda (ou direita)
     float atualX2 = p1.x; // Rastreia o X da direita (ou esquerda)

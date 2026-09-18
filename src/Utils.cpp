@@ -26,10 +26,10 @@ estrutura::Malha arquivo::lerObjeto(const std::string &caminhoArquivo)
     int numVertices, numTriangulos;
 
     // Lê a primeira linha: Quantidades
-    arquivo >> numVertices >> numTriangulos;
+    arquivo >> numVertices >> numTriangulos;    
 
-    std::cout << "O arquivo tem " << numVertices << " vértices e "
-              << numTriangulos << " triângulos." << std::endl;
+    // std::cout << "O arquivo tem " << numVertices << " vértices e "
+    //           << numTriangulos << " triângulos." << std::endl;
 
     // Laço para ler todos os vértices (X, Y, Z)
     for (int i = 0; i < numVertices; i++)
@@ -60,4 +60,41 @@ estrutura::Malha arquivo::lerObjeto(const std::string &caminhoArquivo)
               << " | Triângulos: " << numTriangulos << std::endl;
 
     return malha;
+}
+
+camstruct::Camera arquivo::lerCamera(const std::string &caminhoArquivo)
+{
+    std::ifstream arquivo(caminhoArquivo);
+    camstruct::Camera cam;
+
+    if (!arquivo.is_open())
+    {
+        std::cerr << "Erro: Nao foi possivel abrir o ficheiro da camara.\n";
+        return cam;
+    }
+
+    std::string variavel;
+    char igual; // Para descartar o sinal '='
+
+    // Lê as 6 linhas do ficheiro camera.txt
+    for (int i = 0; i < 6; i++)
+    {
+        arquivo >> variavel >> igual;
+
+        if (variavel == "N")
+            arquivo >> cam.N.x >> cam.N.y >> cam.N.z;
+        else if (variavel == "V")
+            arquivo >> cam.V.x >> cam.V.y >> cam.V.z;
+        else if (variavel == "C")
+            arquivo >> cam.C.x >> cam.C.y >> cam.C.z;
+        else if (variavel == "d")
+            arquivo >> cam.d;
+        else if (variavel == "hx")
+            arquivo >> cam.hx;
+        else if (variavel == "hy")
+            arquivo >> cam.hy;
+    }
+
+    arquivo.close();
+    return cam;
 }
