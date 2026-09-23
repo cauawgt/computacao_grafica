@@ -10,11 +10,6 @@ int main()
 
     std::cout << "\n\n--- PROJETO - COMPUTACÃO GRÁFICA ---\n";
 
-    // Cria a imagem em memória (ex: 800x600)
-    int resX = 800;
-    int resY = 600;
-    rasterizador::Imagem tela = rasterizador::criarImagem(resX, resY);
-
     // Carrega o modelo 3D
     estrutura::Malha malha = arquivo::lerObjeto("../data/objeto.txt");
 
@@ -30,6 +25,10 @@ int main()
 
     while (run)
     {
+        // Cria a imagem em memória (ex: 800x600)
+        int resX = 800;
+        int resY = 600;
+        rasterizador::Imagem tela = rasterizador::criarImagem(resX, resY);
 
         // MENU
         std::cout << "\nMENU\n";
@@ -45,6 +44,7 @@ int main()
         switch (comando)
         {
         case 0:
+
             // Chama a sua função exata do Camera.cpp para arrumar a base
             pipeline::ortogonalizarCamera(cam);
 
