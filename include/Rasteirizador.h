@@ -21,4 +21,11 @@ namespace rasterizador {
 
     // Preenche o triângulo sólido
     void preencherTriangulo(Imagem& img, estrutura::Ponto2D p1, estrutura::Ponto2D p2, estrutura::Ponto2D p3);
+
+    // Coordenadas baricêntricas (alfa, beta, gama) de P em relação
+    // ao triângulo A, B, C (Pontos projetados na tela)
+    // Retorna false se o triângulo for degenerado (área zero)
+    bool baricentricas(estrutura::Ponto2D P,
+                        estrutura::Ponto2D A, estrutura::Ponto2D B, estrutura::Ponto2D C,
+                        float  &alfa, float &beta, float &gama);
 }

@@ -35,6 +35,37 @@ void rasterizador::pintarPixel(Imagem &img, int x, int y, float r, float g, floa
     }
 }
 
+// Coordenadas baricêntricas:
+// P - A = beta*(B - A) + gama*(C - A),  alfa = 1 - beta - gama
+// u = B - A e v = C - A formam uma base de R^2; w = P - A tem coordenadas (beta, gama)
+// nessa base. Resolve-se o sistema 2x2 pela regra de Cramer.
+bool rasterizador::baricentricas(estrutura::Ponto2D P,
+                                 estrutura::Ponto2D A, estrutura::Ponto2D B, estrutura::Ponto2D C,
+                                 float &alfa, float &beta, float &gama)
+{
+    float a = (float)(A.x - C.x); // x1 - x3
+    float c = (float)(A.y - C.y); // y1 - y3
+    float b = (float)(B.x - C.x); // x2 - x3
+    float d = (float)(B.y - C.y); // y2 - y3
+    
+    // Matriz de resultados (P - C)
+    float px = (float)(P.x - C.x); // x0 - x3
+    float py = (float)(P.y - C.y); // y0 - y3
+
+    // Determinante: ad - bc
+    float det = (a * d) - (b * c);
+    
+    if (det == 0.0f)
+        return false; // triângulo degenerado
+
+    // Inversa de M multiplicada pelos resultados
+    alfa = (d * px - b * py) / det;
+    beta = (-c * px + a * py) / det;
+    gama = 1.0f - alfa - beta;
+    
+    return true;
+}
+
 // SCAN LINE (VARREDURA)
 void rasterizador::preencherTriangulo(Imagem &img, estrutura::Ponto2D p1, estrutura::Ponto2D p2, estrutura::Ponto2D p3)
 {
