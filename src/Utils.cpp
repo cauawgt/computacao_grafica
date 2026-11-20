@@ -12,15 +12,35 @@ std::string visualizacao::vetor(estrutura::Vetor3 v)
     return ss.str();
 }
 
-estrutura::Malha arquivo::lerObjeto(const std::string &caminhoArquivo)
+std::filesystem::path arquivo::raizProjeto()
+{
+    namespace fs = std::filesystem;
+    std::error_code ec;
+    fs::path atual = fs::current_path(ec);
+    if (ec)
+        return fs::path(".");
+
+    fs::path p = atual;
+    for (int nivel = 0; nivel < 4; ++nivel)
+    {
+        if (fs::is_directory(p / "data", ec))
+            return p;
+        if (!p.has_parent_path() || p.parent_path() == p)
+            break;
+        p = p.parent_path();
+    }
+    return atual;
+}
+
+bool arquivo::lerObjeto(const std::filesystem::path &caminhoArquivo, estrutura::Malha &malhaSaida)
 {
     std::ifstream arquivo(caminhoArquivo);
     estrutura::Malha malha;
 
     if (!arquivo.is_open())
     {
-        std::cerr << "Erro: Nao foi possivel abrir o arquivo " << caminhoArquivo << std::endl;
-        return malha; // Retorna malha vazia se der erro
+        std::cerr << "Erro: Nao foi possivel abrir o arquivo " << caminhoArquivo.string() << std::endl;
+        return false; // mantém a malha anterior
     }
 
     int numVertices, numTriangulos;
@@ -47,7 +67,7 @@ estrutura::Malha arquivo::lerObjeto(const std::string &caminhoArquivo)
 
         // a contagem comeca no índice 1.
         // Mas os arrays (std::vector) em C++ começam no zero
-        // Portanto, nós subtraímos 1 para alinhar a matemática com a programação:
+        // subtraímos 1 para alinhar a matemática com a programação:
         t.v1 -= 1;
         t.v2 -= 1;
         t.v3 -= 1;
@@ -55,32 +75,41 @@ estrutura::Malha arquivo::lerObjeto(const std::string &caminhoArquivo)
         malha.triangulos.push_back(t);
     }
 
+    if (arquivo.fail())
+    {
+        std::cerr << "Erro: formato invalido em " << caminhoArquivo.string() << std::endl;
+        return false; // mantém a malha anterior
+    }
+
     arquivo.close();
     std::cout << "Malha carregada com sucesso! Vértices: " << numVertices
               << " | Triângulos: " << numTriangulos << std::endl;
 
-    return malha;
+    malhaSaida = std::move(malha);
+    return true;
 }
 
-camstruct::Camera arquivo::lerCamera(const std::string &caminhoArquivo)
+// carregar parâmetros de câmera E iluminação.
+// Formato de cada linha:  nome = valor(es)
+bool arquivo::lerParametros(const std::filesystem::path &caminhoArquivo,
+                            camstruct::Camera &cam,
+                            estrutura::Iluminacao &luz)
 {
     std::ifstream arquivo(caminhoArquivo);
-    camstruct::Camera cam;
 
     if (!arquivo.is_open())
     {
-        std::cerr << "Erro: Nao foi possivel abrir o ficheiro da camara.\n";
-        return cam;
+        std::cerr << "Erro: Nao foi possivel abrir o arquivo de parametros " << caminhoArquivo.string() << "\n";
+        return false;
     }
 
     std::string variavel;
     char igual; // Para descartar o sinal '='
 
-    // Lê as 6 linhas do ficheiro camera.txt
-    for (int i = 0; i < 6; i++)
+    // Lê até o fim do arquivo (qualquer quantidade de linhas, em qualquer ordem)
+    while (arquivo >> variavel >> igual)
     {
-        arquivo >> variavel >> igual;
-
+        // --- Câmera ---
         if (variavel == "N")
             arquivo >> cam.N.x >> cam.N.y >> cam.N.z;
         else if (variavel == "V")
@@ -93,8 +122,32 @@ camstruct::Camera arquivo::lerCamera(const std::string &caminhoArquivo)
             arquivo >> cam.hx;
         else if (variavel == "hy")
             arquivo >> cam.hy;
+        // --- Iluminação ---
+        else if (variavel == "Iamb")
+            arquivo >> luz.Iamb.x >> luz.Iamb.y >> luz.Iamb.z;
+        else if (variavel == "Ka")
+            arquivo >> luz.Ka;
+        else if (variavel == "Il")
+            arquivo >> luz.Il.x >> luz.Il.y >> luz.Il.z;
+        else if (variavel == "Pl")
+            arquivo >> luz.Pl.x >> luz.Pl.y >> luz.Pl.z;
+        else if (variavel == "Kd")
+            arquivo >> luz.Kd.x >> luz.Kd.y >> luz.Kd.z;
+        else if (variavel == "Od")
+            arquivo >> luz.Od.x >> luz.Od.y >> luz.Od.z;
+        else if (variavel == "Ks")
+            arquivo >> luz.Ks;
+        else if (variavel == "eta") // o símbolo η do enunciado vira "eta" no arquivo
+            arquivo >> luz.eta;
+        else
+        {
+            // Variável desconhecida: ignora o resto da linha
+            std::string resto;
+            std::getline(arquivo, resto);
+            std::cerr << "Aviso: parametro desconhecido '" << variavel << "' ignorado.\n";
+        }
     }
 
     arquivo.close();
-    return cam;
+    return true;
 }

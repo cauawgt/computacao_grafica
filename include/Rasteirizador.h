@@ -2,6 +2,8 @@
 #include "Camera.h"
 #include <vector>
 #include <string>
+#include <functional>
+#include <filesystem>
 
 namespace rasterizador {
     // Uma matriz simples que representa a nossa tela
@@ -14,13 +16,16 @@ namespace rasterizador {
     Imagem criarImagem(int largura, int altura);
 
     // Salva a tela no formato PPM para você poder ver a imagem depois!
-    void salvarPPM(const Imagem& img, const std::string& nomeArquivo);
+    // Retorna true se conseguiu gravar o arquivo.
+    bool salvarPPM(const Imagem& img, const std::filesystem::path& nomeArquivo);
 
     // Nossa única função de acender pixel permitida
     void pintarPixel(Imagem& img, int x, int y, float r, float g, float b);
 
-    // Preenche o triângulo sólido
-    void preencherTriangulo(Imagem& img, estrutura::Ponto2D p1, estrutura::Ponto2D p2, estrutura::Ponto2D p3);
+    // Varre (scanline) o triângulo e, para cada pixel (x, y) dentro dele, chama 'pintar'.
+    // Quem decide a cor (baricêntricas, z-buffer, Phong) é essa função.
+    void preencherTriangulo(estrutura::Ponto2D p1, estrutura::Ponto2D p2, estrutura::Ponto2D p3,
+                            const std::function<void(int, int)>& pintar);
 
     // Coordenadas baricêntricas (alfa, beta, gama) de P em relação
     // ao triângulo A, B, C (Pontos projetados na tela)

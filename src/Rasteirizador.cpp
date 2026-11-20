@@ -1,7 +1,7 @@
 #include "../include/Rasteirizador.h"
 #include <fstream>
 #include <algorithm>
-#include <math.h>
+#include <cmath>
 #include <utility> // Para o std::swap
 
 rasterizador::Imagem rasterizador::criarImagem(int largura, int altura)
@@ -14,9 +14,16 @@ rasterizador::Imagem rasterizador::criarImagem(int largura, int altura)
     return img;
 }
 
-void rasterizador::salvarPPM(const Imagem &img, const std::string &nomeArquivo)
+bool rasterizador::salvarPPM(const Imagem &img, const std::filesystem::path &nomeArquivo)
 {
+    // cria a pasta de saída (ex.: out/) se ainda não existir
+    std::error_code ec;
+    if (nomeArquivo.has_parent_path())
+        std::filesystem::create_directories(nomeArquivo.parent_path(), ec);
+
     std::ofstream arquivo(nomeArquivo);
+    if (!arquivo.is_open())
+        return false;
     arquivo << "P3\n"
             << img.largura << " " << img.altura << "\n255\n";
     for (const auto &cor : img.pixels)
@@ -24,6 +31,7 @@ void rasterizador::salvarPPM(const Imagem &img, const std::string &nomeArquivo)
         arquivo << (int)cor.x << " " << (int)cor.y << " " << (int)cor.z << "\n";
     }
     arquivo.close();
+    return !arquivo.fail();
 }
 
 void rasterizador::pintarPixel(Imagem &img, int x, int y, float r, float g, float b)
@@ -67,7 +75,9 @@ bool rasterizador::baricentricas(estrutura::Ponto2D P,
 }
 
 // SCAN LINE (VARREDURA)
-void rasterizador::preencherTriangulo(Imagem &img, estrutura::Ponto2D p1, estrutura::Ponto2D p2, estrutura::Ponto2D p3)
+// Em vez de pintar de branco, chama 'pintar(x, y)' para cada pixel do triângulo.
+void rasterizador::preencherTriangulo(estrutura::Ponto2D p1, estrutura::Ponto2D p2, estrutura::Ponto2D p3,
+                                      const std::function<void(int, int)> &pintar)
 {
 
     // Ordenar os vértices pela coordenada Y (de cima para baixo na tela)
@@ -96,13 +106,13 @@ void rasterizador::preencherTriangulo(Imagem &img, estrutura::Ponto2D p1, estrut
     // Rasterizar o primeiro triângulo menor (parte superior: do P1 ao P2)
     for (int y = p1.y; y < p2.y; ++y)
     { // Usa '<' para não pintar a junção duas vezes
-        int x_min = std::min(atualX1, atualX2);
-        int x_max = std::max(atualX1, atualX2);
+        int x_min = (int)std::floor(std::min(atualX1, atualX2));
+        int x_max = (int)std::floor(std::max(atualX1, atualX2));
 
         // Scanline: Sequência de retas de pixels horizontais
         for (int x = x_min; x <= x_max; ++x)
         {
-            pintarPixel(img, x, y, 255, 255, 255);
+            pintar(x, y);
         }
 
         // Equação de atualização: x = 1/a + x
@@ -110,19 +120,19 @@ void rasterizador::preencherTriangulo(Imagem &img, estrutura::Ponto2D p1, estrut
         atualX2 += invA2;
     }
 
-    // Rasterizar o SEGUNDO TRIÂNGULO menor (parte inferior: do P2 ao P3)
+    // Rasterizar o segundo triangulo menor (parte inferior: do P2 ao P3)
     // A aresta 1 (p1->p2) acabou no p2.y. Agora o curX1 precisa acompanhar a aresta 3 (p2->p3).
     atualX1 = p2.x;
 
     for (int y = p2.y; y <= p3.y; ++y)
     {
-        int x_min = std::min(atualX1, atualX2);
-        int x_max = std::max(atualX1, atualX2);
+        int x_min = (int)std::floor(std::min(atualX1, atualX2));
+        int x_max = (int)std::floor(std::max(atualX1, atualX2));
 
         // Scanline
         for (int x = x_min; x <= x_max; ++x)
         {
-            pintarPixel(img, x, y, 255, 255, 255);
+            pintar(x, y);
         }
 
         // Equação de atualização: x = 1/a + x

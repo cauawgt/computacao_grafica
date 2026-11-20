@@ -1,5 +1,5 @@
 #include "../include/AlgLinear.h"
-#include <math.h>
+#include <cmath>
 
 // Operações Algébricas
 
@@ -48,4 +48,13 @@ estrutura::Vetor3 opesp::produtoVetorial(estrutura::Vetor3 a, estrutura::Vetor3 
         (a.y * b.z) - (a.z * b.y),
         (a.z * b.x) - (a.x * b.z),
         (a.x * b.y) - (a.y * b.x)};
+}
+
+// Normaliza o vetor (tamanho 1). Se a norma for 0, devolve o próprio vetor.
+estrutura::Vetor3 opesp::normalizar(estrutura::Vetor3 a)
+{
+    float n = norma(a);
+    if (n > 0.0f)
+        return opalg::multEscalar(1.0f / n, a);
+    return a;
 }

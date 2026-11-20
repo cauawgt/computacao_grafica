@@ -1,6 +1,6 @@
 #include "../include/Camera.h"
 #include "../include/AlgLinear.h"
-#include <math.h>
+#include <cmath>
 
 void pipeline::ortogonalizarCamera(camstruct::Camera &cam)
 {
@@ -83,10 +83,10 @@ estrutura::Vetor3 pipeline::coordenadasNDC(estrutura::Vetor3 pProjetado, float h
 estrutura::Ponto2D pipeline::coordenadasTela(estrutura::Vetor3 pNDC, int resX, int resY) {
     estrutura::Ponto2D tela;
 
-    // Slide 25: i = floor( ((x_ndc + 1) / 2) * ResX + 0.5 )
+    // i = floor( ((x_ndc + 1) / 2) * ResX + 0.5 )
     tela.x = static_cast<int>(std::floor(((pNDC.x + 1.0f) / 2.0f) * resX + 0.5f));
 
-    // Slide 25: j = floor( ResY - ((y_ndc + 1) / 2) * ResY + 0.5 )
+    // j = floor( ResY - ((y_ndc + 1) / 2) * ResY + 0.5 )
     tela.y = static_cast<int>(std::floor(resY - (((pNDC.y + 1.0f) / 2.0f) * resY) + 0.5f));
 
     return tela;
